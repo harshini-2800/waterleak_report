@@ -1,11 +1,13 @@
 import axios from 'axios';
 
-// When deployed on Vercel as a unified monorepo, relative '/api' calls route directly to the backend
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://brave-bananas-search.loca.lt/api';
 
 const api = axios.create({
   baseURL: API_BASE,
-  timeout: 10000,
+  timeout: 15000,
+  headers: {
+    'bypass-tunnel-reminder': 'true'
+  }
 });
 
 // Interceptor to add admin token if available
@@ -14,6 +16,7 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  config.headers['bypass-tunnel-reminder'] = 'true';
   return config;
 });
 
@@ -22,7 +25,7 @@ export const reportService = {
   getReports: (params) => api.get('/reports', { params }),
   getReportByTrackId: (id) => api.get(`/reports/track/${id}`),
   createReport: (formData) => api.post('/reports', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data', 'bypass-tunnel-reminder': 'true' }
   }),
   getSystemStatus: () => api.get('/status'),
 
@@ -46,7 +49,7 @@ export const getImageUrl = (imagePath) => {
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
-  const backendBase = API_BASE.startsWith('http') ? API_BASE.replace('/api', '') : '';
+  const backendBase = API_BASE.replace('/api', '');
   return `${backendBase}${imagePath}`;
 };
 
