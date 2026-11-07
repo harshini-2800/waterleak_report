@@ -1,0 +1,41 @@
+services:
+  # ----------------------------------------------------
+  # 1. Full-Stack Node/Express API & Asset Server
+  # ----------------------------------------------------
+  - type: web
+    name: waterleak-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGODB_URI
+        sync: false # Set your MongoDB Atlas URI here in Render Dashboard
+
+  # ----------------------------------------------------
+  # 2. Production Single-Page React Web App
+  # ----------------------------------------------------
+  - type: web
+    name: waterleak-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          name: waterleak-backend
+          type: web
+          property: host
+          envVarKey: VITE_API_BASE_URL
