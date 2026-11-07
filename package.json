@@ -1,0 +1,17 @@
+{
+  "name": "waterleak-watch",
+  "version": "1.0.0",
+  "description": "WaterLeak Watch - Community-Driven Water Leakage Reporting and Monitoring Platform",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && npm --prefix backend install && npm --prefix frontend install",
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"cyan,magenta\" \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
+    "build": "npm --prefix frontend run build",
+    "seed": "npm --prefix backend run seed",
+    "clean:demo": "npm --prefix backend run clean:demo"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+
