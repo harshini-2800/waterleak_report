@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
+// When deployed on Vercel as a unified monorepo, relative '/api' calls route directly to the backend
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -45,9 +46,8 @@ export const getImageUrl = (imagePath) => {
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
-  const backendBase = API_BASE.replace('/api', '');
+  const backendBase = API_BASE.startsWith('http') ? API_BASE.replace('/api', '') : '';
   return `${backendBase}${imagePath}`;
 };
 
 export default api;
-
